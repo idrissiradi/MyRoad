@@ -2,25 +2,27 @@
 
 MyRoad is a Python project.
 
-## Features
+## Tech Stack
 
-- Simple and easy to use
-- Modular structure
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [SQLite](https://www.sqlite.org/index.html)
+- [Jinja](https://jinja.palletsprojects.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Pydantic](https://docs.pydantic.dev/)
+- [Alembic](https://alembic.sqlalchemy.org/)
+- [uv](https://github.com/uv-org/uv)
 
-## Getting Started
+## Development
 
-1. Clone the repository:
-    ```
-    git clone https://github.com/yourusername/myroad.git
-    ```
-2. Install dependencies:
-    ```
-    pip install -r requirements.txt
-    ```
-3. Run the project:
-    ```
-    python main.py
-    ```
+This project uses [uv](https://github.com/uv-org/uv) for creating virtual environments and managing dependencies.
+
+To set up your environment:
+
+```bash
+uv venv .venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
 
 ## License
 
