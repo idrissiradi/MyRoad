@@ -1,0 +1,27 @@
+# MyRoad
+
+MyRoad is a Python project.
+
+## Features
+
+- Simple and easy to use
+- Modular structure
+
+## Getting Started
+
+1. Clone the repository:
+    ```
+    git clone https://github.com/yourusername/myroad.git
+    ```
+2. Install dependencies:
+    ```
+    pip install -r requirements.txt
+    ```
+3. Run the project:
+    ```
+    python main.py
+    ```
+
+## License
+
+This project is licensed under the MIT License.
