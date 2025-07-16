@@ -7,10 +7,12 @@ MyRoad is a Python project.
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [SQLite](https://www.sqlite.org/index.html)
 - [Jinja](https://jinja.palletsprojects.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
 - [Pydantic](https://docs.pydantic.dev/)
 - [Alembic](https://alembic.sqlalchemy.org/)
 - [uv](https://github.com/uv-org/uv)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Alpine.js](https://alpinejs.dev/)
+- [htmx](https://htmx.org/)
 
 ## Development
 

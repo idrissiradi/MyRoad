@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>/dashboard</h1>
-    <p>Welcome to your dashboard!</p>
-    {% if user %}
-        <p>User: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Full Name: {{ user.full_name }}</p>
-        <p>Created At: {{ user.created_at }}</p>
-        <p>Last Login: {{ user.last_login }}</p>
-        <p>Last Updated: {{ user.updated_at }}</p>
-    {% endif %}
+    <div>
+        {% include "components/sidebar.html" %}
+
+        <main class="py-10 lg:pl-72">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <!-- Your content -->
+            </div>
+        </main>
+    </div>
 {% endblock %}
