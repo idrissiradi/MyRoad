@@ -5,9 +5,12 @@ description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.16.4",
+    "email-validator>=2.2.0",
     "fastapi[standard]>=0.116.1",
     "jinja2>=3.1.6",
+    "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.10.1",
+    "pyjwt>=2.10.1",
     "python-multipart>=0.0.20",
     "sqlmodel>=0.0.24",
 ]
@@ -17,3 +20,42 @@ dev = [
     "mypy>=1.16.1",
     "ruff>=0.12.3",
 ]
+
+
+[tool.mypy]
+strict = true
+exclude = ["venv", ".venv", "alembic"]
+
+[tool.ruff]
+target-version = "py313"
+exclude = ["alembic"]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "ARG001", # unused arguments in functions
+]
+
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "W191", # indentation contains tabs
+    "B904", # Allow raising exceptions without from e, for HTTPException
+    "UP045",
+]
+
+[tool.ruff.lint.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`.
+keep-runtime-typing = true
+
+[tool.ruff.format]
+indent-style = "tab"
+docstring-code-format = true
+docstring-code-line-length = 20
