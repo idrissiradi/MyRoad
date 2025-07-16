@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 	PROJECT_NAME: str = "MyRoad"
 
 	security: HTTPBearer = HTTPBearer()
-	SECRET_KEY: str = "SECRET_KEY"
+	SECRET_KEY: str = secrets.token_urlsafe(32)
 	ALGORITHM: str = "HS256"
 	ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
