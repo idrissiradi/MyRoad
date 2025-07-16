@@ -3,15 +3,13 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
-from fastapi import Request
 from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
-from sqlmodel import Session
 
 from app.core.config import settings
 from app.models.user import User
 from app.services.user import generate_username, get_user_by_email, get_user_by_username
+from app.utils.dependencies import SessionDep
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
@@ -37,7 +35,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 	return encoded_jwt
 
 
-def validate_email(session: Session, email: str) -> tuple[bool, str]:
+def validate_email(session: SessionDep, email: str) -> tuple[bool, str]:
 	"""Validate email format and availability"""
 	email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 	if not re.match(email_regex, email):
@@ -73,31 +71,7 @@ def validate_full_name(full_name: str) -> tuple[bool, str]:
 	return True, ""
 
 
-def get_current_user(request: Request, session: Session) -> User | None:
-	"""Dependency to get the current user if authenticated, otherwise None"""
-	try:
-		token = request.cookies.get("access_token")
-		if not token:
-			return None
-
-		if token.startswith("Bearer "):
-			token = token[7:]
-
-		payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-
-		username = payload.get("sub")
-		if username is None:
-			return None
-
-		if username is None:
-			return None
-		user = get_user_by_username(session, username)
-		return user
-	except InvalidTokenError:
-		return None
-
-
-def authenticate_user(session: Session, email: str, password: str) -> Any | None:
+def authenticate_user(session: SessionDep, email: str, password: str) -> Any | None:
 	"""Authenticate user with email and password"""
 	user = get_user_by_email(session, email)
 
@@ -110,7 +84,7 @@ def authenticate_user(session: Session, email: str, password: str) -> Any | None
 	return user
 
 
-def create_user(session: Session, email: str, password: str, full_name: str) -> tuple[User, str]:
+def create_user(session: SessionDep, email: str, password: str, full_name: str) -> tuple[User, str]:
 	"""Create a new user with validation"""
 
 	# Validate full name

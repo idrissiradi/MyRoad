@@ -1,13 +1,10 @@
 import uvicorn
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import Session
 
-from app.core.database import get_session
 from app.routers.auth import router as auth_router
-from app.services.auth import get_current_user
-from app.services.templates_config import templates
+from app.utils.dependencies import CurrentUser, SessionDep, templates
 
 app = FastAPI()
 
@@ -18,17 +15,19 @@ app.include_router(auth_router, tags=["Authentication"])
 
 
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
+async def home(request: Request, current_user: CurrentUser = None):
+	"""Render the home page."""
+	if current_user:
+		return RedirectResponse(url="/dashboard", status_code=302)
 	return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, session: Session = Depends(get_session)):
-	user = get_current_user(request, session)
-	if not user:
+async def dashboard(request: Request, session: SessionDep, current_user: CurrentUser = None):
+	if not current_user:
 		return RedirectResponse(url="/auth/login", status_code=302)
 
-	return templates.TemplateResponse("dashboard.html", {"request": request, "user": user})
+	return templates.TemplateResponse("dashboard.html", {"request": request, "user": current_user})
 
 
 if __name__ == "__main__":

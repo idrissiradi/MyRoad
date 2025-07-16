@@ -1,23 +1,20 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlmodel import Session
 
 from app.core.config import settings
-from app.core.database import get_session
 from app.models.user import TokenData
-from app.services.auth import authenticate_user, create_access_token, create_user, get_current_user
-from app.services.templates_config import templates
+from app.services.auth import authenticate_user, create_access_token, create_user
+from app.utils.dependencies import CurrentUser, SessionDep, templates
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request, session: Session = Depends(get_session)):
+async def register_page(request: Request, session: SessionDep, current_user: CurrentUser = None):
 	"""Registration page"""
-	user = get_current_user(request, session)
-	if user:
+	if current_user:
 		return RedirectResponse(url="/dashboard", status_code=302)
 
 	return templates.TemplateResponse("auth/register.html", {"request": request})
@@ -26,11 +23,11 @@ async def register_page(request: Request, session: Session = Depends(get_session
 @router.post("/register")
 async def register_user(
 	request: Request,
+	session: SessionDep,
 	full_name: str = Form(...),
 	email: str = Form(...),
 	password: str = Form(...),
 	confirm_password: str = Form(...),
-	session: Session = Depends(get_session),
 ):
 	"""Register a new user"""
 	if password != confirm_password:
@@ -44,7 +41,6 @@ async def register_user(
 		)
 
 	# Auto-login after successful registration
-	print(f"User {user.username} registered successfully, logging in...")
 	access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 	access_token = create_access_token(
 		data={"sub": user.username}, expires_delta=access_token_expires
@@ -63,20 +59,22 @@ async def register_user(
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login(request: Request):
-	"""
-	Render the login page.
-	"""
+async def login(request: Request, current_user: CurrentUser = None):
+	"""Render the login page."""
+	if current_user:
+		return RedirectResponse(url="/dashboard", status_code=302)
+
 	return templates.TemplateResponse("auth/login.html", {"request": request})
 
 
 @router.post("/login")
 async def login_page(
+	session: SessionDep,
 	request: Request,
 	email: str = Form(...),
 	password: str = Form(...),
-	session: Session = Depends(get_session),
 ):
+	"""Handle user login and set access token in cookies."""
 	user = authenticate_user(session, email, password)
 	if not user:
 		return RedirectResponse(url="/login", status_code=302)
@@ -100,6 +98,7 @@ async def login_page(
 
 @router.post("/logout")
 async def logout():
+	"""Handle user logout by clearing the access token cookie."""
 	response = RedirectResponse(url="/", status_code=302)
 	response.delete_cookie("access_token")
 	return response
