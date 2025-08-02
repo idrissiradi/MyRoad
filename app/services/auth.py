@@ -3,7 +3,6 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
-from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -12,7 +11,6 @@ from app.services.user import generate_username, get_user_by_email, get_user_by_
 from app.utils.dependencies import SessionDep
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -84,7 +82,9 @@ def authenticate_user(session: SessionDep, email: str, password: str) -> Any | N
 	return user
 
 
-def create_user(session: SessionDep, email: str, password: str, full_name: str) -> tuple[User, str]:
+def create_user(
+	session: SessionDep, email: str, password: str, full_name: str
+) -> tuple[User | None, str]:
 	"""Create a new user with validation"""
 
 	# Validate full name
@@ -123,6 +123,6 @@ def create_user(session: SessionDep, email: str, password: str, full_name: str) 
 		session.commit()
 		session.refresh(db_user)
 		return db_user, ""
-	except Exception as e:
+	except Exception:
 		session.rollback()
 		return None, "Registration failed. Please try again."

@@ -4,7 +4,6 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.core.config import settings
-from app.models.user import TokenData
 from app.services.auth import authenticate_user, create_access_token, create_user
 from app.utils.dependencies import CurrentUser, SessionDep, templates
 
@@ -12,7 +11,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request, session: SessionDep, current_user: CurrentUser = None):
+async def register_page(request: Request, current_user: CurrentUser):
 	"""Registration page"""
 	if current_user:
 		return RedirectResponse(url="/dashboard", status_code=302)
@@ -54,12 +53,13 @@ async def register_user(
 		max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
 		secure=False,
 		samesite="lax",
+		path="/",
 	)
 	return response
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login(request: Request, current_user: CurrentUser = None):
+async def login(request: Request, current_user: CurrentUser):
 	"""Render the login page."""
 	if current_user:
 		return RedirectResponse(url="/dashboard", status_code=302)
