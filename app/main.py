@@ -7,6 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
 from app.routers.auth import router as auth_router
+from app.routers.upload import router as upload_router
 from app.utils.dependencies import CurrentUser, templates
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=settings.openapi_url)
@@ -26,6 +27,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 app.include_router(auth_router, tags=["Authentication"])
+app.include_router(upload_router, tags=["File Upload"])
 
 
 @app.get("/", response_class=HTMLResponse)

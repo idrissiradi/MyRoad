@@ -1,8 +1,12 @@
+import os
 import secrets
-from typing import Literal
+from typing import Literal, Optional
 
+from dotenv import load_dotenv
 from fastapi.security import HTTPBearer
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -15,6 +19,8 @@ class Settings(BaseSettings):
 	PROJECT_NAME: str = "MyRoad"
 	API_V1_STR: str = "/api/v1"
 	openapi_url: str = ""
+
+	GOOGLE_API_KEY: Optional[str] = os.getenv("GOOGLE_API_KEY")
 
 	security: HTTPBearer = HTTPBearer()
 	SECRET_KEY: str = secrets.token_urlsafe(32)

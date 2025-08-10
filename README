@@ -1,7 +1,6 @@
-
 # MyRoad
 
-MyRoad is a Python project.
+MyRoad is a Python web project.
 
 ## Tech Stack
 
@@ -14,17 +13,32 @@ MyRoad is a Python project.
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Alpine.js](https://alpinejs.dev/)
 - [htmx](https://htmx.org/)
+- [Pydantic AI](https://github.com/pydantic/pydantic-ai)
+- [Gemini (Google AI)](https://ai.google.dev/)
 
 ## Development
 
 This project uses [uv](https://github.com/uv-org/uv) for creating virtual environments and managing dependencies.
 
-To set up your environment:
+### Setup
 
 ```bash
 uv venv .venv
 source .venv/bin/activate
-uv pip install -r requirements.txt
+```
+
+### Running
+
+Start Tailwind CSS watcher (in one terminal):
+
+```bash
+bunx @tailwindcss/cli -i ./app/static/css/input.css -o ./app/static/css/output.css --watch
+```
+
+Start FastAPI server (in another terminal):
+
+```bash
+uv run fastapi dev app/main.py
 ```
 
 ## License
